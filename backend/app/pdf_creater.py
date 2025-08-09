@@ -50,10 +50,9 @@ STYLE_CSS = f"""
 	}}
     .content {{
         padding-top: 20px;
-        padding-bottom: 20px;
         font-weight: 100;
         line-height: 1;
-        height: 840px;
+        height: 850px;
         display: flex;
         flex-direction: column;        /* располагаем элементы по вертикали */
         justify-content: space-between; /* равные промежутки между элементами */
