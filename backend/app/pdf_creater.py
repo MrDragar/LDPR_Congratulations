@@ -49,17 +49,20 @@ STYLE_CSS = f"""
 		background-repeat: no-repeat;
 	}}
     .content {{
-        padding-top: 21px;
+        padding-top: 20px;
         padding-bottom: 20px;
         font-weight: 100;
         line-height: 1;
-        display: block;   
+        height: 840px;
+        display: flex;
+        flex-direction: column;        /* располагаем элементы по вертикали */
+        justify-content: space-between; /* равные промежутки между элементами */
+       
     }}
     .receiver h1 {{
         font-size: 44px;
         color: #2d3a67;
         text-align: center;
-        margin-bottom: 12px;
     }}
     .receiver h1.surname {{
         font-size: 52px;
@@ -77,13 +80,12 @@ STYLE_CSS = f"""
         width: 600px;
     }}
     .receiver {{
-        margin-bottom: 12px;
+        margin-bottom: 0;
     }}
 
     .sender_container {{
         display: flex;
         justify-content: space-between;
-        margin-top: 120px;
     }}    
 
     .sender h1 {{
@@ -97,7 +99,6 @@ STYLE_CSS = f"""
     }}
     
     .sender h1.name {{
-        margin-bottom: 12px;
         margin-right: 30px;
     }}
     h4 {{
@@ -122,7 +123,7 @@ STYLE_CSS = f"""
     .congratulations_text {{
         text-align: center;
   transform: scaleY(1.3);        /* Вытягиваем по вертикали на 30% */
-  transform-origin: top;      /* Точка трансформации — центр */
+  transform-origin: center;      /* Точка трансформации — центр */
     }}
     .sender {{
         text-align: left;
@@ -192,7 +193,9 @@ def generate_html_report(data):
     </head>
     <body>
         <div class="content">
-            {receiver_html}
+            <div class="receiver_full">
+                {receiver_html}
+            </div>
             <div class="congratulations_text">
                 <p>От души поздравляем вас с профессиональным праздником!<br>
                 Без вашего благородного труда невозможно представить<br>
