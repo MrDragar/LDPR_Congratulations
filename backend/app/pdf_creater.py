@@ -52,7 +52,7 @@ STYLE_CSS = f"""
         padding-top: 20px;
         font-weight: 100;
         line-height: 1;
-        height: 850px;
+        height: 840px;
         display: flex;
         flex-direction: column;        /* располагаем элементы по вертикали */
         justify-content: space-between; /* равные промежутки между элементами */
