@@ -103,9 +103,10 @@ STYLE_CSS = f"""
     h4 {{
         color: #2d3a67;
         text-align: center;
-        font-size: 18px;
+        font-size: 22px;
         margin-bottom: 12px;
         padding-top: 19.9px;
+        font-weight: 200;
     }}
     p {{
         font-size: 24px;
