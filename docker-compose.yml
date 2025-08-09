@@ -9,5 +9,10 @@ services:
     ports:
       - "8004:8000"
     restart: always
+  frontend:
+    build: ./frontend
+    ports:
+      - "84:80"
+    restart: always
 
 

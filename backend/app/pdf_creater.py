@@ -49,69 +49,89 @@ STYLE_CSS = f"""
 		background-repeat: no-repeat;
 	}}
     .content {{
-        padding-right: 30px;
-        padding-left: 30px;
-        padding-top: 32px;
+        padding-top: 21px;
         padding-bottom: 20px;
-  transform: scaleY(1.3);        /* Вытягиваем по вертикали на 30% */
-  transform-origin: top;      /* Точка трансформации — центр */
-  display: block;   
+        font-weight: 100;
+        line-height: 1;
+        display: block;   
     }}
     .receiver h1 {{
         font-size: 44px;
         color: #2d3a67;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
     }}
     .receiver h1.surname {{
         font-size: 52px;
         font-weight: bold;
-        margin-bottom: 32px;
+        margin-bottom: 0;
+    }}
+    .receiver h1.company_name {{
+        font-size: 52px;
+        font-weight: bold;
+        margin-bottom: 0;
+        margin-left: 138px;
+        margin-right: 138px;
+        overflow-wrap: break-word;   /* перенос длинных слов */
+        word-break: keep-all;        /* не режем слова посередине (для русского — лучше) */
+        width: 600px;
+    }}
+    .receiver {{
+        margin-bottom: 12px;
     }}
 
     .sender_container {{
         display: flex;
         justify-content: space-between;
-        margin-top: 50px;
+        margin-top: 120px;
     }}    
 
     .sender h1 {{
         font-size: 38px;
         color: #2d3a67;
         text-align: left;
-        margin-bottom: 20px;
     }}
     .sender h1.surname {{
         font-size: 42px;
         font-weight: bold;
-        margin-bottom: 32px;
     }}
-
+    
+    .sender h1.name {{
+        margin-bottom: 12px;
+        margin-right: 30px;
+    }}
     h4 {{
         color: #2d3a67;
         text-align: center;
         font-size: 18px;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
+        padding-top: 19.9px;
     }}
     p {{
-        font-size: 20px;
-        line-height: 1.2;
-        margin-bottom: 20px;
+        font-size: 24px;
+        line-height: 1.25;
+        margin-bottom: 12px;
+        font-weight: 300;
     }}
     .sender p {{
-        font-size: 16px;
+        font-size: 20px;
         color: #2d3a67;
+        margin-right: 30px;
     }}
     .congratulations_text {{
         text-align: center;
+  transform: scaleY(1.3);        /* Вытягиваем по вертикали на 30% */
+  transform-origin: top;      /* Точка трансформации — центр */
     }}
     .sender {{
         text-align: left;
     }}
     .date {{
+        color: #2d3a67;
         font-size: 20px;
         text-align: center;
-        margin-top: 12px;
+        margin-top: 2px;
+        font-weight: 400;
     }}
     .signature {{
         text-align: center;
@@ -119,6 +139,7 @@ STYLE_CSS = f"""
     }}
     .signature img {{
         text-align: center;
+        height: 160px;
     }}
 
     .surname-line {{
@@ -134,7 +155,6 @@ STYLE_CSS = f"""
         background-color: #FFD700; 
         min-width: 30px; 
         align-self: center;
-        transform: translateY(-12px); 
     }}
 </style>
 """
@@ -142,27 +162,38 @@ STYLE_CSS = f"""
 
 def generate_html_report(data):
     images_paths = []
-    gender = "Уважаемый" if data["recipient"]["gender"] == "male" else "Уважаемая"
+    if data["entityType"] == "individual":
+        gender = "Уважаемый" if data["recipient"]["gender"] == "male" else "Уважаемая"
+        receiver_html = f"""
+            <h4>{gender}</h4>
+            <div class="receiver">
+                <h1 class="surname">{data["recipient"]["lastName"].upper()}</h1>
+                <h1>{data["recipient"]["firstName"].upper()} {data["recipient"]["middleName"].upper()}!</h1>
+            </div>
+        """
+    else:
+         receiver_html = f"""
+            <h4>Коллективу</h4>
+            <div class="receiver">
+                <h1 class="company_name">{data["recipient"]["companyName"].upper()}</h1>
+            </div>       
+         """
     html_content = f"""
     <!DOCTYPE html>
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
         <title>ОТЧЕТ ДЕЯТЕЛЬНОСТИ ДЕПУТАТА ЛДПР</title>
-        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet">
         {STYLE_CSS}
     </head>
     <body>
         <div class="content">
-            <h4>{gender}</h4>
-            <div class="receiver">
-                <h1 class="surname">{data["recipient"]["lastName"]}</h1>
-                <h1>{data["recipient"]["firstName"]} {data["recipient"]["middleName"]}!</h1>
-            </div>
+            {receiver_html}
             <div class="congratulations_text">
-                <p>От души поздравляем васс профессиональным праздником!<br>
+                <p>От души поздравляем вас с профессиональным праздником!<br>
                 Без вашего благородного труда невозможно представить<br>
                 стабильную и сильную Россию.</p>
                 <br>
@@ -181,10 +212,10 @@ def generate_html_report(data):
                 </div>
                 <div class="sender">
                     <div class="surname-line">
-                        <h1 class="surname">{data['sender']['lastName']}</h1>
+                        <h1 class="surname">{data['sender']['lastName'].upper()}</h1>
                         <div class="yellow-stripe"></div>
                     </div>
-                    <h1 class="name">{data['sender']['firstName']} {data['sender']['middleName']}</h1>
+                    <h1 class="name">{data['sender']['firstName'].upper()} {data['sender']['middleName'].upper()}</h1>
                     <p>Председатель партии ЛДПР,<br>глава фракции ЛДПР в Государственной Думе<br>Федерального Собрания Российской Федерации<p>
                 </div>
             </div>
