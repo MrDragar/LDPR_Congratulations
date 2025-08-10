@@ -93,7 +93,12 @@ const App: React.FC = () => {
       const pdfUrl = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = pdfUrl;
-      link.download = result.message.split('/').pop() || 'letter.pdf';
+			if (dataToExport.entityType === 'individual') {
+		      link.download = dataToExport.recipient["lastName"] + ' благодарственное письмо.pdf';
+			}
+			else {
+		      link.download = dataToExport.recipient["companyName"] + ' благодарственное письмо.pdf';
+			}
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
