@@ -184,7 +184,7 @@ def generate_html_report(data):
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <title>ОТЧЕТ ДЕЯТЕЛЬНОСТИ ДЕПУТАТА ЛДПР</title>
+        <title>Поздравительное письмо</title>
         <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet">
