@@ -42,14 +42,47 @@ const App: React.FC = () => {
     setFormData(prev => ({ ...prev, date: e.target.value }));
   }, []);
 
+  const isValidDate = (dateStr: string): boolean => {
+    // Strictly match DD.MM.YYYY format using regex
+    const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    if (!dateRegex.test(dateStr)) return false;
+
+    const parts = dateStr.split('.');
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return false;
+
+    const date = new Date(year, month, day);
+    if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return false;
+
+    // Check if the date is in the past
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return date < now;
+  };
+
   const handleGenerateJson = async () => {
     setError(null);
     setIsGenerating(true);
 
+    if (!formData.date) {
+      setError('Введите дату поздравительного письма');
+      setIsGenerating(false);
+      return;
+    }
+
+    if (!isValidDate(formData.date)) {
+      setError('Неверный формат даты поздравительного письма. Используйте ДД.ММ.ГГГГ (например, 01.01.1990)');
+      setIsGenerating(false);
+      return;
+    }
+
     try {
       const dataToExport: any = {
         entityType: formData.entityType,
-        date: formData.date || new Date().toLocaleDateString('ru-RU'),
+        date: formData.date,
       };
 
       if (formData.entityType === 'individual') {
@@ -65,7 +98,6 @@ const App: React.FC = () => {
           };
       }
 
-      // Step 1: Request PDF generation
       const response = await fetch(`${process.env.SERVER_URL}/generate_letter`, {
         method: 'POST',
         headers: {
@@ -83,7 +115,6 @@ const App: React.FC = () => {
         throw new Error('Invalid server response');
       }
 
-      // Step 2: Fetch the PDF as a blob
       const pdfResponse = await fetch(result.message);
       if (!pdfResponse.ok) {
         throw new Error(`Failed to fetch PDF: ${pdfResponse.status}`);
@@ -93,16 +124,15 @@ const App: React.FC = () => {
       const pdfUrl = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = pdfUrl;
-			if (dataToExport.entityType === 'individual') {
-		      link.download = dataToExport.recipient["lastName"] + ' благодарственное письмо.pdf';
-			}
-			else {
-		      link.download = dataToExport.recipient["companyName"] + ' благодарственное письмо.pdf';
-			}
+      if (dataToExport.entityType === 'individual') {
+        link.download = dataToExport.recipient["lastName"] + ' благодарственное письмо.pdf';
+      } else {
+        link.download = dataToExport.recipient["companyName"] + ' благодарственное письмо.pdf';
+      }
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(pdfUrl); // Clean up the temporary URL
+      URL.revokeObjectURL(pdfUrl);
     } catch (e) {
       console.error(e);
       setError(`Не удалось скачать PDF: ${e instanceof Error ? e.message : String(e)}`);
@@ -145,11 +175,11 @@ const App: React.FC = () => {
                         </div>
                     )}
                     
-                    <FormField label="Дата" id="date" name="date" type="text" value={formData.date} onChange={handleDateChange} placeholder={new Date().toLocaleDateString('ru-RU')} />
+                    <FormField label="Дата поздравительного письма" id="date" name="date" type="text" value={formData.date} onChange={handleDateChange} placeholder="01.01.1990" />
 
                     <div className="pt-6 text-center">
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-                        <Button onClick={handleGenerateJson} زنديغو disabled={isGenerating}>
+                        <Button onClick={handleGenerateJson} disabled={isGenerating}>
                             {isGenerating ? 'Генерация...' : 'Сгенерировать письмо'}
                             {isGenerating ? <Loader2 className="animate-spin ml-2" /> : <ArrowRight className="ml-2 h-5 w-5" />}
                         </Button>
