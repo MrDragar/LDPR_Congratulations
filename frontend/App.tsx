@@ -18,6 +18,8 @@ const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const today = new Date().toLocaleDateString('ru-RU');
+
   const handleRecipientChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -57,10 +59,7 @@ const App: React.FC = () => {
     const date = new Date(year, month, day);
     if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return false;
 
-    // Check if the date is in the past
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return date < now;
+    return true;
   };
 
   const handleGenerateJson = async () => {
@@ -74,7 +73,7 @@ const App: React.FC = () => {
     }
 
     if (!isValidDate(formData.date)) {
-      setError('Неверный формат даты поздравительного письма. Используйте ДД.ММ.ГГГГ (например, 01.01.1990)');
+      setError(`Неверный формат даты поздравительного письма. Используйте ДД.ММ.ГГГГ (например, ${today})`);
       setIsGenerating(false);
       return;
     }
@@ -175,7 +174,7 @@ const App: React.FC = () => {
                         </div>
                     )}
                     
-                    <FormField label="Дата поздравительного письма" id="date" name="date" type="text" value={formData.date} onChange={handleDateChange} placeholder="01.01.1990" />
+                    <FormField label="Дата поздравительного письма" id="date" name="date" type="text" value={formData.date} onChange={handleDateChange} placeholder={today} />
 
                     <div className="pt-6 text-center">
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
